@@ -1,0 +1,57 @@
+# Compiled object files
+*.o
+*.obj
+
+# Compiled static libraries
+*.a
+*.lib
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Debug files
+*.dSYM/
+*.su
+*.gch
+*.elf
+
+# Dependencies
+*.d
+*.dep
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build directories
+build/
+dist/
+bin/
+obj/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Autotools
+Makefile.in
+configure
+aclocal.m4
+autom4te.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
