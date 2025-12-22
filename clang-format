@@ -1,0 +1,17 @@
+BasedOnStyle: LLVM
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+BreakBeforeBraces: Attach        # K&R: { cùng dòng
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
+
+ColumnLimit: 100
+
+PointerAlignment: Right          # int *ptr
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+
+IndentCaseLabels: true

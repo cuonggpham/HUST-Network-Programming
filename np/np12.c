@@ -3,45 +3,51 @@
  *
  * KIEN THUC LAP TRINH MANG:
  * - fork() la co so de tao multi-process server
- * - Moi client xu ly boi mot process rieng
- *
- * KIEN THUC C ADVANCE:
- * - fork(): Tao tien trinh con - Copy toan bo process hien tai
- * - Process ID: fork() tra ve 0 cho child, PID cua child cho parent
- * - exit(): Ket thuc process (khac voi return)
- * - Memory space: Parent va child co vung nho rieng biet sau khi fork
- * - Copy-on-write: He dieu hanh toi uu hoa viec copy bo nho
+ * - Moi client co the duoc xu ly boi mot process rieng biet
  */
 
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-int main()
-{
-    int x = 0;
+int main() {
+  int x = 0;
 
-    // fork() tao ban sao cua tien trinh hien tai
-    // Tra ve 0 neu dang o child process
-    // Tra ve PID cua child neu dang o parent process
-    // Tra ve -1 neu loi
-    if (fork() == 0)
-    {
-        // Code nay chi chay o CHILD process
-        x = x + 2; // x cua child = 2
-        printf("Child: Hello Forking!\n");
+  // fork(): Tao tien trinh con - SYSTEM CALL quan trong nhat cua Unix
+  // Sau khi fork(), co 2 process chay DONG THOI:
+  // - Parent process (process goc)
+  // - Child process (ban sao cua parent)
+  //
+  // Gia tri tra ve:
+  // - Trong PARENT: tra ve PID cua child (so duong)
+  // - Trong CHILD: tra ve 0
+  // - Loi: tra ve -1 (khong tao duoc child)
+  //
+  // SAU fork(), child COPY toan bo memory space cua parent
+  // (thuc te dung Copy-on-Write de toi uu)
+  if (fork() == 0) {
+    // Code nay chi chay trong CHILD process (vi fork() == 0)
+    x = x + 2; // x cua child = 2
 
-        // exit() ket thuc child process
-        // Khong dung return vi co the con code phia duoi
-        exit(0);
-    }
-    else
-    {
-        // Code nay chi chay o PARENT process
-        x = x + 1; // x cua parent = 1
-        printf("Parent: Hello Forking!\n");
-        // Chu y: x cua child va parent la doc lap, khong anh huong lan nhau
-    }
+    printf("Child: Hello Forking!\n");
 
-    fgetc(stdin);
+    // exit(): Ket thuc process ngay lap tuc
+    // Khac voi return: exit() ket thuc process tu bat ky dau
+    // return chi thoat khoi ham hien tai
+    // exit(0): Ket thuc thanh cong
+    // exit(1): Ket thuc voi loi
+    exit(0);
+  } else {
+    // Code nay chi chay trong PARENT process
+    x = x + 1; // x cua parent = 1
+    printf("Parent: Hello Forking!\n");
+
+    // CHU Y QUAN TRONG:
+    // x cua child va parent la HOAN TOAN DOC LAP sau fork()
+    // Thay doi x trong child KHONG anh huong x trong parent va nguoc lai
+    // Day la co so cua process isolation
+  }
+
+  // Doi phim Enter truoc khi thoat de thay output
+  fgetc(stdin);
 }

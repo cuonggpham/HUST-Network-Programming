@@ -1,77 +1,71 @@
 /*
  * CHUONG TRINH: Noi chuoi - Doc nhieu dong va noi thanh mot chuoi lon
  *
- * KIEN THUC C ADVANCE:
- * - Con tro kep (double pointer): char** - Con tro toi con tro
- * - realloc(): Cap phat lai bo nho dong (dynamic memory reallocation)
- * - Global variable: Bien toan cuc co the truy cap tu bat ky ham nao
- * - Pass by reference: Truyen dia chi cua con tro de thay doi gia tri ben ngoai ham
- * - sprintf(): Ghi du lieu vao chuoi theo dinh dang
- * - Operator *: Dereferencing operator de truy cap gia tri ma con tro tro toi
- * - Operator &: Address-of operator de lay dia chi cua bien
+ * KIEN THUC LAP TRINH MANG:
+ * - Ky thuat xu ly chuoi dong (dynamic string) dung trong network protocols
+ * - Buffer management cho du lieu nhan qua mang
  */
 
-#include <stdio.h>
 #include <malloc.h>
-#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-// Bien toan cuc - Co the truy cap tu moi noi trong chuong trinh
+// Global variable: Bien toan cuc co the truy cap tu bat ky ham nao trong file
+// Khoi tao = NULL de biet chua co du lieu
 char *output = NULL;
 
-// Ham Append su dung con tro kep de co the thay doi dia chi cua output
-// destination la con tro toi con tro (pointer to pointer)
-void Append(char **destination, const char *str)
-{
-    // *destination la gia tri cua con tro ma destination tro toi
-    char *tmp = *destination;
+// Double pointer (char **): Con tro toi con tro
+// Dung khi can thay doi dia chi ma con tro tro toi (pass by reference cho
+// pointer)
+void Append(char **destination, const char *str) {
+  // Dereferencing operator (*): Lay gia tri tai dia chi ma pointer tro toi
+  // *destination la char* (chuoi hien tai)
+  char *tmp = *destination;
 
-    // Tinh chieu dai hien tai cua chuoi
-    // Neu tmp = NULL thi oldlen = 0
-    int oldlen = tmp != NULL ? strlen(tmp) : 0;
+  // Ternary operator (?:): if-else trong 1 dong
+  // condition ? value_if_true : value_if_false
+  int oldlen = tmp != NULL ? strlen(tmp) : 0;
 
-    // realloc() cap phat lai bo nho voi kich thuoc moi
-    // Giu nguyen du lieu cu va mo rong them cho chuoi moi
-    tmp = (char *)realloc(tmp, oldlen + strlen(str) + 1);
+  // realloc(): Cap phat lai bo nho dong (dynamic memory reallocation)
+  // Giu nguyen du lieu cu, mo rong hoac thu nho vung nho
+  // Neu tmp = NULL, hoat dong nhu malloc()
+  tmp = (char *)realloc(tmp, oldlen + strlen(str) + 1);
 
-    // Them chuoi moi vao cuoi chuoi hien tai
-    // tmp + strlen(tmp) la dia chi cua ki tu '\0' (cuoi chuoi)
-    sprintf(tmp + strlen(tmp), "%s", str);
+  // sprintf(): Ghi du lieu vao chuoi theo format (tuong tu printf nhung ra
+  // string) tmp + strlen(tmp): Con tro toi vi tri cuoi chuoi (ky tu '\0')
+  // Pointer arithmetic: cong so vao pointer de di chuyen vi tri
+  sprintf(tmp + strlen(tmp), "%s", str);
 
-    // Cap nhat lai gia tri cua con tro ben ngoai ham
-    *destination = tmp;
+  // Cap nhat lai gia tri cua con tro ben ngoai ham thong qua double pointer
+  *destination = tmp;
 }
 
-int main()
-{
-    // Vong lap vo han (0 == 0 luon dung)
-    while (0 == 0)
-    {
-        char tmp[1024] = {0};
-        // Doc mot dong tu stdin (ban phim)
-        fgets(tmp, sizeof(tmp) - 1, stdin);
+int main() {
+  // Infinite loop: while(0 == 0) tuong duong while(true) hoac for(;;)
+  while (0 == 0) {
+    char tmp[1024] = {0};
+    fgets(tmp, sizeof(tmp) - 1, stdin);
 
-        // Loai bo cac ki tu xuong dong '\r' va '\n' o cuoi chuoi
-        // Windows dung \r\n, Unix dung \n
-        while (tmp[strlen(tmp) - 1] == '\r' ||
-               tmp[strlen(tmp) - 1] == '\n')
-        {
-            tmp[strlen(tmp) - 1] = 0;
-        }
-
-        // Neu dong khong rong thi them vao output
-        if (strlen(tmp) > 0)
-        {
-            // Truyen &output (dia chi cua output) de ham co the thay doi gia tri cua output
-            Append(&output, tmp);
-        }
-        else
-            break; // Dong rong thi thoat vong lap
+    // Loai bo cac ki tu xuong dong o cuoi chuoi
+    // Windows dung \r\n (CRLF), Unix/Linux dung \n (LF)
+    while (tmp[strlen(tmp) - 1] == '\r' || tmp[strlen(tmp) - 1] == '\n') {
+      // Thay ki tu cuoi bang null terminator de "cat" chuoi
+      tmp[strlen(tmp) - 1] = 0;
     }
-    printf("%s\n", output);
 
-    // Giai phong bo nho da cap phat dong
-    // Quan trong de tranh memory leak
-    free(output);
-    output = NULL;
+    if (strlen(tmp) > 0) {
+      // Address-of operator (&): Lay dia chi cua bien
+      // &output la dia chi cua con tro output (kieu char**)
+      Append(&output, tmp);
+    } else
+      break;
+  }
+  printf("%s\n", output);
+
+  // free(): Giai phong bo nho da cap phat dong
+  // QUAN TRONG: Tranh memory leak - luon free() sau khi dung xong
+  // malloc/realloc
+  free(output);
+  output = NULL; // Dat ve NULL sau khi free de tranh dangling pointer
 }

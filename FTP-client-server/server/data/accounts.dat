@@ -1,0 +1,11 @@
+# Danh sach tai khoan FTP
+# Format: username:password:root_directory
+
+# Tai khoan admin
+admin:admin:/tmp
+
+# Tai khoan user thuong
+user:user:/tmp
+
+# Them tai khoan khac tai day...
+# test:test123:/home/test
